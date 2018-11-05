@@ -26,7 +26,7 @@ namespace servidor
             System.IO.File.WriteAllText(@"C:\Users\Public\WriteText.txt", contents);
 
             // Deserialize
-            /*JavaScriptSerializer serializer = new JavaScriptSerializer();
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
             if (contents.Contains("exception"))
             {
                 // Error
@@ -41,7 +41,7 @@ namespace servidor
                     c.progreso = 0;
 
                 return View(cursos);
-            }*/
+            }
 
             Console.ReadKey();
         }
