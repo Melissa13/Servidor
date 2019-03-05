@@ -10,45 +10,41 @@ using System.Runtime.Serialization.Json;
 using System.Web.Script.Serialization;
 using System.Web;
 using System.Text;
+using Newtonsoft.Json;
 //using Website.Common.Exceptions.MoodleIntegration;
 //using Website.Common.Objects.BC.Moodle;
 //using Newtonsoft.Json;
 
 namespace servidor
 {
+
+    
+
     class Program
     {
         static void Main(string[] args)
         {
-            String token = "70b758fc3218debfbbe861679b9a6cff";
+            
+            String token = "5708e1cb28191d8d50401a15e56bea81";
 
-            MoodleUser user = new MoodleUser();
-            user.username = HttpUtility.UrlEncode("judadocu");
-            user.password = HttpUtility.UrlEncode("Silver1");
+            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/webservice/rest/server.php?wstoken={0}&wsfunction={1}&moodlewsrestformat=json&&criteria[0][key]=email&criteria[0][value]=%%", token, "core_user_get_users");
 
-            List<MoodleUser> userList = new List<MoodleUser>();
-            userList.Add(user);
-
-            Array arrUsers = userList.ToArray();
-
-            String postData = String.Format("users[0][username]={0}&users[0][password]={1}", user.username, user.password);
-
-            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/webservice/rest/server.php?wstoken={0}&wsfunction={1}&moodlewsrestformat=json", token, "core_course_get_courses");
             Console.WriteLine(createRequest);
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(createRequest);
-            req.Method = "POST";
+            req.Method = "GET";
             req.ContentType = "application/x-www-form-urlencoded";
             req.ContentLength = 0;
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
             Stream resStream = resp.GetResponseStream();
             StreamReader reader = new StreamReader(resStream);
             string contents = reader.ReadToEnd();
-            System.IO.File.WriteAllText(@"C:\Users\Public\WriteText.txt", contents);
 
+            //Console.WriteLine(contents);
 
-            // Deserialize
-            //JavaScriptSerializer serializer = new JavaScriptSerializer();
-            /*if (contents.Contains("exception"))
+            /*
+             *           // Deserialize
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            if (contents.Contains("exception"))
             {
                 // Error
                 MoodleException moodleError = serializer.Deserialize<MoodleException>(contents);
@@ -57,14 +53,52 @@ namespace servidor
             else
             {
                 // Good
-                List<Curso> cursos = serializer.Deserialize<List<Curso>>(contents);
-                foreach (Curso c in cursos)
-                    c.progreso = 0;
+                List<Categoria> categorias = serializer.Deserialize<List<Categoria>>(contents);
+                
+                Funciones.tempCategorias.AddRange(categorias);
 
-                return View(cursos);
-            }*/
+                return View(categorias);
+            }
 
-            Console.ReadKey();
+            
+        }
+             */
+            
+            // Deserialize
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            if (contents.Contains("exception"))
+            {
+                // Error
+                MoodleException moodleError = serializer.Deserialize<MoodleException>(contents);
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+            {
+               // RootObject root = JsonConvert.DeserializeObject<List<User>>(contents);
+
+                RootObject root = JsonConvert.DeserializeObject<RootObject>(contents);
+
+                List<User> users = root.users;
+
+
+                if(users[0].email != null)
+                    Console.WriteLine(users[0].email);
+
+
+                // User user = JsonConvert.DeserializeObject<User>(contents);
+                // List<User> users = serializer.Deserialize<List<User>>(contents);
+
+                Console.WriteLine("lal");
+                //Funciones.tempCategorias.AddRange(users);
+                // Good
+                /*List<Categoria> categorias = serializer.Deserialize<List<Categoria>>(contents);
+
+                Funciones.tempCategorias.AddRange(categorias);
+
+                return View(categorias);*/
+
+
+            }
         }
 
         public class MoodleUser
