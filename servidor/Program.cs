@@ -22,12 +22,13 @@ namespace servidor
 
     class Program
     {
+       
         static void Main(string[] args)
         {
-            
-            String token = "5708e1cb28191d8d50401a15e56bea81";
-
-            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/webservice/rest/server.php?wstoken={0}&wsfunction={1}&moodlewsrestformat=json&&criteria[0][key]=email&criteria[0][value]=%%", token, "core_user_get_users");
+            String pass = "123456Em";
+            String user = "proyecto2018em";
+            String service = "moodle_mobile_app";
+            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/login/token.php?username="+user+"&password="+pass+"&service="+service);
 
             Console.WriteLine(createRequest);
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(createRequest);
@@ -39,30 +40,9 @@ namespace servidor
             StreamReader reader = new StreamReader(resStream);
             string contents = reader.ReadToEnd();
 
-            //Console.WriteLine(contents);
-
-            /*
-             *           // Deserialize
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            if (contents.Contains("exception"))
-            {
-                // Error
-                MoodleException moodleError = serializer.Deserialize<MoodleException>(contents);
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            else
-            {
-                // Good
-                List<Categoria> categorias = serializer.Deserialize<List<Categoria>>(contents);
-                
-                Funciones.tempCategorias.AddRange(categorias);
-
-                return View(categorias);
-            }
+            Console.WriteLine(contents);
 
             
-        }
-             */
             
             // Deserialize
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -74,30 +54,130 @@ namespace servidor
             }
             else
             {
-               // RootObject root = JsonConvert.DeserializeObject<List<User>>(contents);
+             
+                RootObjectToken root = JsonConvert.DeserializeObject<RootObjectToken>(contents);
+
+                String tok = root.token;
+                bool passa = false;
+
+                if (tok != null)
+                {
+                    //Login
+                    passa = true;
+                }
+                else
+                    //no dejar pasar
+                    passa = false;
+
+                Console.WriteLine("lal");
+
+            }
+        }
+
+        //Validar login
+        public void ValidateLogin()
+        {
+            /*Ese es un placeholder de prueba*/
+            String pass = "123456Em";
+            /*Ese es un placeholder de prueba*/
+            String user = "proyecto2018em";
+            /* Este string es constante, no se puede cambiar porque es el
+             * que da acceso a la pva a ver si valida o no el usuario que
+             * se manda*/
+            String service = "moodle_mobile_app";
+
+            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/login/token.php?username=" + user + "&password=" + pass + "&service=" + service);
+
+            Console.WriteLine(createRequest);
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(createRequest);
+            req.Method = "GET";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = 0;
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            Stream resStream = resp.GetResponseStream();
+            StreamReader reader = new StreamReader(resStream);
+            string contents = reader.ReadToEnd();
+
+            Console.WriteLine(contents);
+
+
+
+            // Deserialize
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            if (contents.Contains("exception"))
+            {
+                // Error
+                MoodleException moodleError = serializer.Deserialize<MoodleException>(contents);
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+            {
+
+                RootObjectToken root = JsonConvert.DeserializeObject<RootObjectToken>(contents);
+
+                String tok = root.token;
+                bool passa = false;
+
+                if (tok != null)
+                {
+                    //Login
+                    passa = true;
+                }
+                else
+                    //no dejar pasar
+                    passa = false;
+
+                //Puesto para breakpoint y parar la consola para chequear
+                Console.WriteLine("lal");
+
+            }
+        }
+
+        //Conseguir usuario
+        public void GetUsers()
+        {
+            String token = "5708e1cb28191d8d50401a15e56bea81";
+
+            /*placeholder de prueba para conseguir datos de usuario
+             Si se quieren todos los usuario de moodle se pone: %%*/
+            string email = "juandanieljoa@gmail.com";
+            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/webservice/rest/server.php?wstoken={0}&wsfunction={1}&moodlewsrestformat=json&&criteria[0][key]=email&criteria[0][value]="+email, token, "core_user_get_users");
+
+            Console.WriteLine(createRequest);
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(createRequest);
+            req.Method = "GET";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = 0;
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            Stream resStream = resp.GetResponseStream();
+            StreamReader reader = new StreamReader(resStream);
+            string contents = reader.ReadToEnd();
+            
+
+            // Deserialize
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            if (contents.Contains("exception"))
+            {
+                // Error
+                MoodleException moodleError = serializer.Deserialize<MoodleException>(contents);
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                // RootObject root = JsonConvert.DeserializeObject<List<User>>(contents);
 
                 RootObject root = JsonConvert.DeserializeObject<RootObject>(contents);
 
+                //La lista de todos los usuarios desearalizada de Json osea una lista normal
                 List<User> users = root.users;
 
+                //Probando que sirve
+                if (users[0].email != null)
+                    Console.WriteLine(users[0].fullname);
 
-                if(users[0].email != null)
-                    Console.WriteLine(users[0].email);
-
-
-                // User user = JsonConvert.DeserializeObject<User>(contents);
-                // List<User> users = serializer.Deserialize<List<User>>(contents);
-
+                //Puesto para breakpoint y parar la consola para chequear
                 Console.WriteLine("lal");
-                //Funciones.tempCategorias.AddRange(users);
-                // Good
-                /*List<Categoria> categorias = serializer.Deserialize<List<Categoria>>(contents);
-
-                Funciones.tempCategorias.AddRange(categorias);
-
-                return View(categorias);*/
-
-
+               
             }
         }
 

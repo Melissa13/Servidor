@@ -15,3 +15,14 @@ C:\Users\judaj\Documents\Moodle Service\Servidor\servidor\bin\Debug\Newtonsoft.J
 C:\Users\judaj\Documents\Moodle Service\Servidor\servidor\bin\Debug\Newtonsoft.Json.pdb
 C:\Users\judaj\Documents\Moodle Service\Servidor\servidor\bin\Debug\Newtonsoft.Json.xml
 C:\Users\judaj\Documents\Moodle Service\Servidor\servidor\obj\Debug\servidor.csproj.CopyComplete
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\bin\Debug\servidor.exe.config
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\bin\Debug\servidor.exe
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\bin\Debug\servidor.pdb
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\bin\Debug\Newtonsoft.Json.dll
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\bin\Debug\Newtonsoft.Json.xml
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\obj\Debug\servidor.csprojAssemblyReference.cache
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\obj\Debug\servidor.csproj.CoreCompileInputs.cache
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\obj\Debug\servidor.csproj.CopyComplete
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\obj\Debug\servidor.exe
+C:\Users\judaj\Documents\Servidor\Servidor\servidor\obj\Debug\servidor.pdb
