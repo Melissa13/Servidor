@@ -11,6 +11,7 @@ using System.Web.Script.Serialization;
 using System.Web;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 //using Website.Common.Exceptions.MoodleIntegration;
 //using Website.Common.Objects.BC.Moodle;
 //using Newtonsoft.Json;
@@ -22,13 +23,15 @@ namespace servidor
 
     class Program
     {
-       
+
         static void Main(string[] args)
         {
-            String pass = "123456Em";
-            String user = "proyecto2018em";
-            String service = "moodle_mobile_app";
-            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/login/token.php?username="+user+"&password="+pass+"&service="+service);
+            String token = "5708e1cb28191d8d50401a15e56bea81";
+            string descarga;
+
+            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/webservice/rest/server.php?wstoken={0}&wsfunction={1}&courseid={2}&moodlewsrestformat=json", token, "core_course_get_contents", "10");
+
+           // www.deltasoft.com.do/ moodle / webservice / rest / server.php ? wstoken = 5708e1cb28191d8d50401a15e56bea81 & wsfunction = core_course_get_contents & courseid = 10 & moodlewsrestformat = json
 
             Console.WriteLine(createRequest);
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(createRequest);
@@ -39,10 +42,6 @@ namespace servidor
             Stream resStream = resp.GetResponseStream();
             StreamReader reader = new StreamReader(resStream);
             string contents = reader.ReadToEnd();
-
-            Console.WriteLine(contents);
-
-            
             
             // Deserialize
             JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -54,23 +53,19 @@ namespace servidor
             }
             else
             {
-             
-                RootObjectToken root = JsonConvert.DeserializeObject<RootObjectToken>(contents);
+                
+                List<Course> courses = JsonConvert.DeserializeObject<List<Course>>(contents);
+                Course root = courses[0];
+                Module mod = root.Modules[0];
+                Content cont = mod.Contents[0];
+                Console.WriteLine(cont.Fileurl);
+                descarga = cont.Fileurl + "&token=" + token;
 
-                String tok = root.token;
-                bool passa = false;
-
-                if (tok != null)
+                using (var client = new WebClient())
                 {
-                    //Login
-                    passa = true;
+                    client.DownloadFile(descarga, "kek.pdf");
                 }
-                else
-                    //no dejar pasar
-                    passa = false;
-
-                Console.WriteLine("lal");
-
+                
             }
         }
 
@@ -113,7 +108,7 @@ namespace servidor
             else
             {
 
-                RootObjectToken root = JsonConvert.DeserializeObject<RootObjectToken>(contents);
+                Token root = JsonConvert.DeserializeObject<Token>(contents);
 
                 String tok = root.token;
                 bool passa = false;

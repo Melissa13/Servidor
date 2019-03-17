@@ -8,12 +8,9 @@ namespace servidor
 {
     class Token
     {
-    }
-
-    public class RootObjectToken
-    {
         public string token { get; set; }
         public object privatetoken { get; set; }
     }
+    
 
 }
