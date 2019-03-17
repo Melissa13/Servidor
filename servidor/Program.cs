@@ -26,13 +26,18 @@ namespace servidor
 
         static void Main(string[] args)
         {
+            
+        }
+
+        //Conseguir los archivos
+        public void GetFiles()
+        {
             String token = "5708e1cb28191d8d50401a15e56bea81";
             string descarga;
+            string nameF;
 
             string createRequest = string.Format("http://www.deltasoft.com.do/moodle/webservice/rest/server.php?wstoken={0}&wsfunction={1}&courseid={2}&moodlewsrestformat=json", token, "core_course_get_contents", "10");
-
-           // www.deltasoft.com.do/ moodle / webservice / rest / server.php ? wstoken = 5708e1cb28191d8d50401a15e56bea81 & wsfunction = core_course_get_contents & courseid = 10 & moodlewsrestformat = json
-
+            
             Console.WriteLine(createRequest);
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(createRequest);
             req.Method = "GET";
@@ -42,7 +47,7 @@ namespace servidor
             Stream resStream = resp.GetResponseStream();
             StreamReader reader = new StreamReader(resStream);
             string contents = reader.ReadToEnd();
-            
+
             // Deserialize
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             if (contents.Contains("exception"))
@@ -53,19 +58,41 @@ namespace servidor
             }
             else
             {
-                
+                /*LA lista de cursos, porque el JSON dice que un solo curso es una lista
+                 * de cursos de un elemento (MALDITO JSON DEL DIABLO CONIO) y luego me 
+                 di cuenta que los topicos lo tiene asi y mierda entonces para poder
+                 entrar a todos los topicos*/
                 List<Course> courses = JsonConvert.DeserializeObject<List<Course>>(contents);
-                Course root = courses[0];
-                Module mod = root.Modules[0];
-                Content cont = mod.Contents[0];
-                Console.WriteLine(cont.Fileurl);
-                descarga = cont.Fileurl + "&token=" + token;
-
-                using (var client = new WebClient())
+                foreach (Course root in courses)
                 {
-                    client.DownloadFile(descarga, "kek.pdf");
+                    //Buscando dentro del topico lo que hay
+                    foreach (Module mod in root.Modules)
+                    {
+                        //no todos tienen archivos
+                        if (mod.Contents != null)
+                        {
+                            //Buscando
+                            foreach (Content cont in mod.Contents)
+                            {
+                                //Tomar el nombre del archivo, que se pasa el formato que esta(pdf o word, etc)
+                                nameF = cont.Filename;
+                                //Link de descarga se completa aquí
+                                descarga = cont.Fileurl + "&token=" + token;
+
+                                //Bajando todos los archivos ya
+                                using (var client = new WebClient())
+                                {
+                                    //Esto es una vaina para poder bajar porque entonces no valida el SSL y da error
+                                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                                    //Lee la funcion de client, tal vez da una idea de lo que hace (?)
+                                    client.DownloadFile(descarga, nameF);
+                                }
+                            }
+                        }
+
+                    }
                 }
-                
+
             }
         }
 
