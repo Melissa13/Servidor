@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Course.cs" />
+    <Compile Include="UserCourses.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Program.cs" />

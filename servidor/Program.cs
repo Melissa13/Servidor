@@ -29,6 +29,51 @@ namespace servidor
             
         }
 
+        public void GetUserCourses()
+        {
+            String token = "5708e1cb28191d8d50401a15e56bea81";
+            //El id del estudiante
+            int id = 447;
+            //Haciendo la llamada para conseguir el curso
+            string createRequest = string.Format("http://www.deltasoft.com.do/moodle/webservice/rest/server.php?wstoken={0}&wsfunction={1}&userid={2}&moodlewsrestformat=json", token, "core_enrol_get_users_courses", id.ToString());
+            Console.WriteLine(createRequest);
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(createRequest);
+            req.Method = "GET";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = 0;
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            Stream resStream = resp.GetResponseStream();
+            StreamReader reader = new StreamReader(resStream);
+            string contents = reader.ReadToEnd();
+
+            // Deserialize
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            if (contents.Contains("exception"))
+            {
+                // Error
+                MoodleException moodleError = serializer.Deserialize<MoodleException>(contents);
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else
+            {
+                /*LA lista de cursos en lo que el ususario esta inscrito*/
+                List<UserCourses> courses = JsonConvert.DeserializeObject<List<UserCourses>>(contents);
+                //Leyendo la lista
+                foreach (UserCourses item in courses)
+                {
+                    //id del curso
+                    Console.WriteLine(item.id);
+                    //Nombre corto
+                    Console.WriteLine(item.shortname);
+                    //Nombre abreviado
+                    Console.WriteLine(item.fullname);
+                }
+
+                Console.WriteLine("lala");
+
+            }
+        }
+
         //Conseguir los archivos
         public void GetFiles()
         {
@@ -195,7 +240,13 @@ namespace servidor
 
                 //Probando que sirve
                 if (users[0].email != null)
+                {
+                    Console.WriteLine(users[0].id);
+                    Console.WriteLine(users[0].username);
                     Console.WriteLine(users[0].fullname);
+                    Console.WriteLine(users[0].email);
+                }
+                    
 
                 //Puesto para breakpoint y parar la consola para chequear
                 Console.WriteLine("lal");
